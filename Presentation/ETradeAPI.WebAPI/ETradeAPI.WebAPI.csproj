@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.10.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\ETradeAPI.Application\ETradeAPI.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ETradeAPI.Persistence\ETradeAPI.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
