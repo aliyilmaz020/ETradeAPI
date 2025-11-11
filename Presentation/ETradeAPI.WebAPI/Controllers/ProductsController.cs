@@ -33,7 +33,7 @@ namespace ETradeAPI.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct()
         {
-            await _productWriteRepository.CreateAsync(new Product { Id = Guid.NewGuid(),CreatedDate=DateTime.UtcNow,Name="p1",Price=100,Stock=190});
+            await _productWriteRepository.CreateAsync(new Product { Id = Guid.NewGuid(), CreatedDate = DateTime.UtcNow, Name = "p1", Price = 100, Stock = 190 });
             await _productWriteRepository.SaveAsync();
             return Ok();
         }
