@@ -1,6 +1,7 @@
 ﻿using ETradeAPI.Application.Repositories.ProductRepositories;
 using ETradeAPI.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace ETradeAPI.WebAPI.Controllers
 {
@@ -23,7 +24,12 @@ namespace ETradeAPI.WebAPI.Controllers
             var values = _productReadRepository.GetAll();
             return Ok(values);
         }
-
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProduct(string id)
+        {
+            var value = await _productReadRepository.GetByIdAsync(id);
+            return Ok(value);
+        }
         [HttpPost]
         public async Task<IActionResult> CreateProduct()
         {

@@ -3,7 +3,6 @@ using ETradeAPI.Domain.Entities.Common;
 using ETradeAPI.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Threading.Tasks;
 
 namespace ETradeAPI.Persistence.Repositories
 {
