@@ -1,4 +1,4 @@
-namespace ETradeAPI
+namespace ETradeAPI.WebAPI
 {
     public class WeatherForecast
     {

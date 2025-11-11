@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ETradeAPI.Controllers
+namespace ETradeAPI.WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
