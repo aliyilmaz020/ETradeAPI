@@ -1,5 +1,6 @@
 ﻿using ETradeAPI.Application.Repositories.ProductRepositories;
 using ETradeAPI.Application.ViewModels.Products;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -11,11 +12,13 @@ namespace ETradeAPI.WebAPI.Controllers
     {
         private readonly IProductReadRepository _productReadRepository;
         private readonly IProductWriteRepository _productWriteRepository;
+        private readonly IValidator<CreateProductVM> _createProductValidator;
 
-        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository)
+        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IValidator<CreateProductVM> createProductValidator)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
+            _createProductValidator = createProductValidator;
         }
 
         [HttpGet]
@@ -33,6 +36,12 @@ namespace ETradeAPI.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct(CreateProductVM model)
         {
+            var validationResult = await _createProductValidator.ValidateAsync(model);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors.GroupBy(x => x.PropertyName)
+                    .ToDictionary(x => x.Key, x => x.Select(x => x.ErrorMessage).ToArray()));
+            }
             await _productWriteRepository.AddAsync(new()
             {
                 Name = model.Name,

@@ -1,3 +1,4 @@
+using ETradeAPI.Application;
 using ETradeAPI.Persistence;
 using Scalar.AspNetCore;
 
@@ -11,6 +12,7 @@ builder.Services.AddCors(opt =>
         policy.WithOrigins("http://localhost:4200", "https://localhost:4200").AllowAnyHeader().AllowAnyMethod();
     });
 });
+builder.Services.AddValidationServices();
 builder.Services.AddPersistenceServices();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
