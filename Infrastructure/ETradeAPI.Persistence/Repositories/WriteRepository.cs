@@ -17,13 +17,13 @@ namespace ETradeAPI.Persistence.Repositories
 
         public DbSet<T> Table => _context.Set<T>();
 
-        public async Task<bool> CreateAsync(T model)
+        public async Task<bool> AddAsync(T model)
         {
             EntityEntry entry = await Table.AddAsync(model);
             return entry.State == EntityState.Added;
         }
 
-        public async Task<bool> CreateRangeAsync(List<T> models)
+        public async Task<bool> AddRangeAsync(List<T> models)
         {
             await Table.AddRangeAsync(models);
             return true;
