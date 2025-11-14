@@ -1,9 +1,9 @@
-﻿using ETradeAPI.Application.ViewModels.Products;
+﻿using ETradeAPI.Application.Features.Commands.Product.CreateProduct;
 using FluentValidation;
 
 namespace ETradeAPI.Application.Validators.Products
 {
-    public class CreateProductValidator : AbstractValidator<CreateProductVM>
+    public class CreateProductValidator : AbstractValidator<CreateProductCommandRequest>
     {
         public CreateProductValidator()
         {

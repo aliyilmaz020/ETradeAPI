@@ -13,6 +13,7 @@ builder.Services.AddCors(opt =>
     });
 });
 builder.Services.AddValidationServices();
+builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
