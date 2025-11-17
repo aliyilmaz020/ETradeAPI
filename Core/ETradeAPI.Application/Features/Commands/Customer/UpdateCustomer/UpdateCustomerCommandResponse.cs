@@ -1,4 +1,4 @@
-﻿namespace ETradeAPI.Application.Features.Commands.Customer.RemoveCustomer
+﻿namespace ETradeAPI.Application.Features.Commands.Customer.UpdateCustomer
 {
     public class UpdateCustomerCommandResponse
     {

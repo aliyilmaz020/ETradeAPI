@@ -8,7 +8,10 @@ namespace ETradeAPI.Application
     {
         public static void AddApplicationServices(this IServiceCollection services)
         {
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
+            });
             services.AddAutoMapper(cfg => cfg.AddProfile<GeneralMapping>());
         }
     }

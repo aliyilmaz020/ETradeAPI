@@ -2,6 +2,7 @@
 using ETradeAPI.Application.Repositories.CustomerRepositories;
 using P = ETradeAPI.Domain.Entities;
 using MediatR;
+using ETradeAPI.Application.Features.Commands.Customer.UpdateCustomer;
 
 namespace ETradeAPI.Application.Features.Commands.Customer.RemoveCustomer
 {

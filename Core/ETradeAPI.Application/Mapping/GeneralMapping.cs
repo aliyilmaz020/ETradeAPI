@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ETradeAPI.Application.Features.Commands.Customer.CreateCustomer;
-using ETradeAPI.Application.Features.Commands.Customer.RemoveCustomer;
+using ETradeAPI.Application.Features.Commands.Customer.UpdateCustomer;
 using ETradeAPI.Application.Features.Commands.Order.CreateOrder;
 using ETradeAPI.Application.Features.Commands.Order.UpdateOrder;
 using ETradeAPI.Application.Features.Commands.Product.CreateProduct;
