@@ -4,6 +4,7 @@ using ETradeAPI.Application.Features.Commands.Product.UpdateProduct;
 using ETradeAPI.Application.Features.Queries.Product.GetByIdProduct;
 using ETradeAPI.Application.Features.Queries.Product.GetProducts;
 using ETradeAPI.Application.Repositories.ProductRepositories;
+using ETradeAPI.Application.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -17,18 +18,18 @@ namespace ETradeAPI.WebAPI.Controllers
         private readonly IValidator<CreateProductCommandRequest> _createProductValidator;
         private readonly IValidator<UpdateProductCommandRequest> _updateProductValidator;
         private readonly IValidator<RemoveProductCommandRequest> _removeProductValidator;
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMediator _mediator;
+        private readonly IFileService _fileService;
         private readonly IProductReadRepository _productReadRepository;
 
-        public ProductsController(IValidator<CreateProductCommandRequest> createProductValidator, IMediator mediator, IProductReadRepository productReadRepository, IValidator<RemoveProductCommandRequest> removeProductValidator, IValidator<UpdateProductCommandRequest> updateProductValidator, IWebHostEnvironment webHostEnvironment)
+        public ProductsController(IValidator<CreateProductCommandRequest> createProductValidator, IMediator mediator, IProductReadRepository productReadRepository, IValidator<RemoveProductCommandRequest> removeProductValidator, IValidator<UpdateProductCommandRequest> updateProductValidator, IFileService fileService)
         {
             _createProductValidator = createProductValidator;
             _mediator = mediator;
             _productReadRepository = productReadRepository;
             _removeProductValidator = removeProductValidator;
             _updateProductValidator = updateProductValidator;
-            _webHostEnvironment = webHostEnvironment;
+            _fileService = fileService;
         }
 
         [HttpGet]
@@ -87,25 +88,10 @@ namespace ETradeAPI.WebAPI.Controllers
             return Ok(response);
         }
         [HttpPost("[action]")]
+        [RequestFormLimits(MultipartBodyLengthLimit = 104857600)]
         public async Task<IActionResult> Upload()
         {
-            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "resource/product-images");
-            IFormFileCollection files = Request.Form.Files;
-            if (!files.Any())
-            {
-                return BadRequest();
-            }
-            foreach (IFormFile file in files)
-            {
-                if (!Path.Exists(uploadPath))
-                {
-                    Directory.CreateDirectory(uploadPath);
-                }
-                string fullPath = Path.Combine(uploadPath, $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}");
-                using FileStream stream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, useAsync: false);
-                await file.CopyToAsync(stream);
-                await stream.FlushAsync();
-            }
+            await _fileService.UploadAsync("resource/product-images", Request.Form.Files);
             return Ok();
         }
     }
