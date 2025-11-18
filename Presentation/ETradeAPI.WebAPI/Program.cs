@@ -27,6 +27,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference("api-docs");
 }
+
+app.UseStaticFiles();
 app.UseCors();
 app.UseHttpsRedirection();
 
