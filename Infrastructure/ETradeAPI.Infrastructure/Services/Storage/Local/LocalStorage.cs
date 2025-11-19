@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ETradeAPI.Infrastructure.Services.Storage.Local
 {
-    public class LocalStorage(IWebHostEnvironment webHostEnvironment) : ILocalStorage
+    public class LocalStorage(IWebHostEnvironment webHostEnvironment) : Storage, ILocalStorage
     {
         public async Task DeleteAsync(string path, string fileName)
             => File.Delete($"{path}\\{fileName}");
@@ -28,8 +28,9 @@ namespace ETradeAPI.Infrastructure.Services.Storage.Local
             List<(string fileName, string path)> datas = [];
             foreach (IFormFile file in files)
             {
-                await CopyFileAsync($"{uploadPath}\\{file.Name}", file);
-                datas.Add((file.Name, $"{path}\\{file.Name}"));
+                string fileNewName = await FileRenameAsync(path, file.Name, HasFile);
+                await CopyFileAsync($"{uploadPath}\\{fileNewName}", file);
+                datas.Add((fileNewName, $"{path}\\{fileNewName}"));
             }
             return datas;
         }

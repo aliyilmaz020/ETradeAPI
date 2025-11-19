@@ -6,9 +6,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace ETradeAPI.Infrastructure.Services.Storage.Azure
 {
-    public class AzureStorage(IConfiguration configuration) : IAzureStorage
+    public class AzureStorage(IConfiguration configuration) : Storage, IAzureStorage
     {
-        private readonly BlobServiceClient _blobServiceClient = new BlobServiceClient(configuration["Storage:Azure"]);
+        private readonly BlobServiceClient _blobServiceClient = new(configuration["Storage:Azure"]);
         BlobContainerClient _blobContainerClient;
 
         public async Task DeleteAsync(string containerName, string fileName)
@@ -39,9 +39,10 @@ namespace ETradeAPI.Infrastructure.Services.Storage.Azure
             List<(string fileName, string path)> datas = new();
             foreach (IFormFile file in files)
             {
-                BlobClient blobClient = _blobContainerClient.GetBlobClient(file.Name);
+                string fileNewName = await FileRenameAsync(containerName, file.Name, HasFile);
+                BlobClient blobClient = _blobContainerClient.GetBlobClient(fileNewName);
                 await blobClient.UploadAsync(file.OpenReadStream());
-                datas.Add((file.Name, containerName));
+                datas.Add((fileNewName, containerName));
             }
             return datas;
         }
