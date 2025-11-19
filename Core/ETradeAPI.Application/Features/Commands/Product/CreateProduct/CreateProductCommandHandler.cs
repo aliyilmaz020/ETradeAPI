@@ -5,22 +5,17 @@ using P = ETradeAPI.Domain.Entities;
 
 namespace ETradeAPI.Application.Features.Commands.Product.CreateProduct
 {
-    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommandRequest, CreateProductCommandResponse>
+    public class CreateProductCommandHandler(
+        IProductWriteRepository productWriteRepository,
+        IMapper mapper)
+        : IRequestHandler<CreateProductCommandRequest,
+            CreateProductCommandResponse>
     {
-        private readonly IProductWriteRepository _productWriteRepository;
-        private readonly IMapper _mapper;
-
-        public CreateProductCommandHandler(IProductWriteRepository productWriteRepository, IMapper mapper)
-        {
-            _productWriteRepository = productWriteRepository;
-            _mapper = mapper;
-        }
-
         public async Task<CreateProductCommandResponse> Handle(CreateProductCommandRequest request, CancellationToken cancellationToken)
         {
-            var product = _mapper.Map<P.Product>(request);
-            await _productWriteRepository.AddAsync(product);
-            await _productWriteRepository.SaveAsync();
+            var product = mapper.Map<P.Product>(request);
+            await productWriteRepository.AddAsync(product);
+            await productWriteRepository.SaveAsync();
             return new() { IsSuccess = true };
         }
     }

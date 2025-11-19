@@ -4,20 +4,14 @@ using MediatR;
 
 namespace ETradeAPI.Application.Features.Queries.Customer.GetByIdCustomer
 {
-    public class GetByIdCustomerQueryHandler : IRequestHandler<GetByIdCustomerQueryRequest, GetByIdCustomerQueryResponse>
+    public class GetByIdCustomerQueryHandler(
+        ICustomerReadRepository customerReadRepository,
+        IMapper mapper) : IRequestHandler<GetByIdCustomerQueryRequest,
+            GetByIdCustomerQueryResponse>
     {
-        private readonly ICustomerReadRepository _customerReadRepository;
-        private readonly IMapper _mapper;
-
-        public GetByIdCustomerQueryHandler(ICustomerReadRepository customerReadRepository, IMapper mapper)
-        {
-            _customerReadRepository = customerReadRepository;
-            _mapper = mapper;
-        }
-
         public async Task<GetByIdCustomerQueryResponse> Handle(GetByIdCustomerQueryRequest request, CancellationToken cancellationToken)
         {
-            var customer = _mapper.Map<GetByIdCustomerQueryResponse>(await _customerReadRepository.GetByIdAsync(request.Id,false));
+            var customer = mapper.Map<GetByIdCustomerQueryResponse>(await customerReadRepository.GetByIdAsync(request.Id, false));
             return customer;
         }
     }

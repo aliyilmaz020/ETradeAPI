@@ -5,22 +5,20 @@ using MediatR;
 
 namespace ETradeAPI.Application.Features.Commands.Customer.CreateCustomer
 {
-    public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommandRequest, CreateCustomerCommandResponse>
+    public class CreateCustomerCommandHandler(
+        ICustomerWriteRepository customerWriteRepository,
+        IMapper mapper) :
+            IRequestHandler<
+            CreateCustomerCommandRequest,
+            CreateCustomerCommandResponse>
     {
-        private readonly ICustomerWriteRepository _customerWriteRepository;
-        private readonly IMapper _mapper;
-
-        public CreateCustomerCommandHandler(ICustomerWriteRepository customerWriteRepository, IMapper mapper)
+        public async Task<CreateCustomerCommandResponse> Handle(
+            CreateCustomerCommandRequest request,
+            CancellationToken cancellationToken)
         {
-            _customerWriteRepository = customerWriteRepository;
-            _mapper = mapper;
-        }
-
-        public async Task<CreateCustomerCommandResponse> Handle(CreateCustomerCommandRequest request, CancellationToken cancellationToken)
-        {
-            var customer = _mapper.Map<P.Customer>(request);
-            await _customerWriteRepository.AddAsync(customer);
-            await _customerWriteRepository.SaveAsync();
+            var customer = mapper.Map<P.Customer>(request);
+            await customerWriteRepository.AddAsync(customer);
+            await customerWriteRepository.SaveAsync();
             return new();
         }
     }

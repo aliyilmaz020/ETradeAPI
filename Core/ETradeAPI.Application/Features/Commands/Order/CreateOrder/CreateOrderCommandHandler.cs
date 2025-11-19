@@ -5,22 +5,13 @@ using MediatR;
 
 namespace ETradeAPI.Application.Features.Commands.Order.CreateOrder
 {
-    public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommandRequest, CreateOrderCommandResponse>
+    public class CreateOrderCommandHandler(IOrderWriteRepository orderWriteRepository, IMapper mapper) : IRequestHandler<CreateOrderCommandRequest, CreateOrderCommandResponse>
     {
-        private readonly IOrderWriteRepository _orderWriteRepository;
-        private readonly IMapper _mapper;
-
-        public CreateOrderCommandHandler(IOrderWriteRepository orderWriteRepository, IMapper mapper)
-        {
-            _orderWriteRepository = orderWriteRepository;
-            _mapper = mapper;
-        }
-
         public async Task<CreateOrderCommandResponse> Handle(CreateOrderCommandRequest request, CancellationToken cancellationToken)
         {
-            var order = _mapper.Map<P.Order>(request);
-            await _orderWriteRepository.AddAsync(order);
-            await _orderWriteRepository.SaveAsync();
+            var order = mapper.Map<P.Order>(request);
+            await orderWriteRepository.AddAsync(order);
+            await orderWriteRepository.SaveAsync();
             return new()
             {
                 IsCreated = true

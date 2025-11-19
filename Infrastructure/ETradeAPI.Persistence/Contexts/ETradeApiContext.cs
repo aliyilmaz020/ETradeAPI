@@ -13,8 +13,8 @@ namespace ETradeAPI.Persistence.Contexts
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var datas = ChangeTracker.Entries<BaseEntity>();
-            foreach (var data in datas)
+            var dataList = ChangeTracker.Entries<BaseEntity>();
+            foreach (var data in dataList)
             {
                 _ = data.State switch
                 {

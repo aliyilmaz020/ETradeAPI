@@ -2,7 +2,8 @@
 
 namespace ETradeAPI.Application.Features.Commands.Customer.CreateCustomer
 {
-    public class CreateCustomerCommandRequest : IRequest<CreateCustomerCommandResponse>
+    public class CreateCustomerCommandRequest :
+        IRequest<CreateCustomerCommandResponse>
     {
         public string Name { get; set; }
         public string Surname { get; set; }
