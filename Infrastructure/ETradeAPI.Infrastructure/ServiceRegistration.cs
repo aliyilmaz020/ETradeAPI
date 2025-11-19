@@ -1,6 +1,5 @@
-﻿using ETradeAPI.Application.Services;
-using ETradeAPI.Infrastructure.Services;
-using Microsoft.AspNetCore.Http.Features;
+﻿using ETradeAPI.Application.Abstractions.Storage;
+using ETradeAPI.Infrastructure.Services.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ETradeAPI.Infrastructure
@@ -9,7 +8,11 @@ namespace ETradeAPI.Infrastructure
     {
         public static void AddInfrastructureServices(this IServiceCollection services)
         {
-            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IStorageService, StorageService>();
+        }
+        public static void AddStorage<T>(this IServiceCollection services) where T : class, IStorage
+        {
+            services.AddScoped<IStorage, T>();
         }
     }
 }

@@ -1,5 +1,6 @@
 using ETradeAPI.Application;
 using ETradeAPI.Infrastructure;
+using ETradeAPI.Infrastructure.Services.Storage.Local;
 using ETradeAPI.Persistence;
 using Scalar.AspNetCore;
 
@@ -15,9 +16,10 @@ builder.Services.AddCors(opt =>
 
 builder.WebHost.ConfigureKestrel(opt =>
 {
-    opt.Limits.MaxRequestBodySize = null;  //disable the request body limit.
+    opt.Limits.MaxRequestBodySize = null;  
 });
 
+builder.Services.AddStorage<LocalStorage>();
 builder.Services.AddValidationServices();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices();

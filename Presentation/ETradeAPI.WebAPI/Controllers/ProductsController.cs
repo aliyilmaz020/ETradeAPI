@@ -1,13 +1,11 @@
-﻿using ETradeAPI.Application.Features.Commands.Product.CreateProduct;
+﻿using ETradeAPI.Application.Abstractions.Storage;
+using ETradeAPI.Application.Features.Commands.Product.CreateProduct;
 using ETradeAPI.Application.Features.Commands.Product.RemoveProduct;
 using ETradeAPI.Application.Features.Commands.Product.UpdateProduct;
 using ETradeAPI.Application.Features.Queries.Product.GetByIdProduct;
 using ETradeAPI.Application.Features.Queries.Product.GetProducts;
-using ETradeAPI.Application.Repositories.FileRepositories;
-using ETradeAPI.Application.Repositories.InvoiceFileRepositories;
 using ETradeAPI.Application.Repositories.ProductImageFileRepositories;
 using ETradeAPI.Application.Repositories.ProductRepositories;
-using ETradeAPI.Application.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -22,13 +20,8 @@ namespace ETradeAPI.WebAPI.Controllers
         IProductReadRepository productReadRepository,
         IValidator<RemoveProductCommandRequest> removeProductValidator,
         IValidator<UpdateProductCommandRequest> updateProductValidator,
-        IFileService fileService,
-        IFileReadRepository fileReadRepository,
-        IFileWriteRepository fileWriteRepository,
-        IInvoiceFileReadRepository invoiceFileReadRepository,
-        IInvoiceFileWriteRepository invoiceFileWriteRepository,
-        IProductImageFileReadRepository productImageFileReadRepository,
-        IProductImageFileWriteRepository productImageFileWriteRepository
+        IProductImageFileWriteRepository productImageFileWriteRepository,
+        IStorageService storageService
         ) : ControllerBase
     {
 
@@ -91,29 +84,15 @@ namespace ETradeAPI.WebAPI.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = 104857600)]
         public async Task<IActionResult> Upload()
         {
-            var images = await fileService.UploadAsync("resource/invoice-images", Request.Form.Files);
+            var images = await storageService.UploadAsync("resource/files", Request.Form.Files);
 
-            await fileWriteRepository.AddRangeAsync(images.Select(i => new Domain.Entities.File
+            await productImageFileWriteRepository.AddRangeAsync(images.Select(i => new Domain.Entities.ProductImageFile
             {
                 FileName = i.fileName,
-                Path = i.path
+                Path = i.path,
+                Storage = storageService.StorageName
             }).ToList());
-            await fileWriteRepository.SaveAsync();
-
-            //await productImageFileWriteRepository.AddRangeAsync(images.Select(i => new Domain.Entities.ProductImageFile
-            //{
-            //    FileName = i.fileName,
-            //    Path = i.path
-            //}).ToList());
-            //await productImageFileWriteRepository.SaveAsync();
-
-            //await invoiceFileWriteRepository.AddRangeAsync(images.Select(i => new Domain.Entities.InvoiceFile
-            //{
-            //    FileName = i.fileName,
-            //    Path = i.path,
-            //    Price = new Random().Next()
-            //}).ToList());
-            //await invoiceFileWriteRepository.SaveAsync();
+            await productImageFileWriteRepository.SaveAsync();
             return Ok();
         }
     }
