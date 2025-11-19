@@ -1,5 +1,6 @@
 using ETradeAPI.Application;
 using ETradeAPI.Infrastructure;
+using ETradeAPI.Infrastructure.Services.Storage.Azure;
 using ETradeAPI.Infrastructure.Services.Storage.Local;
 using ETradeAPI.Persistence;
 using Scalar.AspNetCore;
@@ -19,7 +20,7 @@ builder.WebHost.ConfigureKestrel(opt =>
     opt.Limits.MaxRequestBodySize = null;  
 });
 
-builder.Services.AddStorage<LocalStorage>();
+builder.Services.AddStorage<AzureStorage>();
 builder.Services.AddValidationServices();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices();

@@ -84,7 +84,7 @@ namespace ETradeAPI.WebAPI.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = 104857600)]
         public async Task<IActionResult> Upload()
         {
-            var images = await storageService.UploadAsync("resource/files", Request.Form.Files);
+            var images = await storageService.UploadAsync("files", Request.Form.Files);
 
             await productImageFileWriteRepository.AddRangeAsync(images.Select(i => new Domain.Entities.ProductImageFile
             {
