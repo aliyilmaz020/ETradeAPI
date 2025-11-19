@@ -62,7 +62,7 @@ namespace ETradeAPI.Infrastructure.Services
             {
                 string fileNewName = await FileRenameAsync(uploadPath, file.FileName);
 
-                datas.Add((fileNewName, $"{uploadPath}\\{fileNewName}"));
+                datas.Add((fileNewName, $"{path}\\{fileNewName}"));
                 bool result = await CopyFileAsync($"{uploadPath}\\{fileNewName}", file);
                 results.Add(result);
             }

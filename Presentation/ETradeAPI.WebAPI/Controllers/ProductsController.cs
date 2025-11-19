@@ -3,6 +3,9 @@ using ETradeAPI.Application.Features.Commands.Product.RemoveProduct;
 using ETradeAPI.Application.Features.Commands.Product.UpdateProduct;
 using ETradeAPI.Application.Features.Queries.Product.GetByIdProduct;
 using ETradeAPI.Application.Features.Queries.Product.GetProducts;
+using ETradeAPI.Application.Repositories.FileRepositories;
+using ETradeAPI.Application.Repositories.InvoiceFileRepositories;
+using ETradeAPI.Application.Repositories.ProductImageFileRepositories;
 using ETradeAPI.Application.Repositories.ProductRepositories;
 using ETradeAPI.Application.Services;
 using FluentValidation;
@@ -19,7 +22,13 @@ namespace ETradeAPI.WebAPI.Controllers
         IProductReadRepository productReadRepository,
         IValidator<RemoveProductCommandRequest> removeProductValidator,
         IValidator<UpdateProductCommandRequest> updateProductValidator,
-        IFileService fileService
+        IFileService fileService,
+        IFileReadRepository fileReadRepository,
+        IFileWriteRepository fileWriteRepository,
+        IInvoiceFileReadRepository invoiceFileReadRepository,
+        IInvoiceFileWriteRepository invoiceFileWriteRepository,
+        IProductImageFileReadRepository productImageFileReadRepository,
+        IProductImageFileWriteRepository productImageFileWriteRepository
         ) : ControllerBase
     {
 
@@ -82,7 +91,29 @@ namespace ETradeAPI.WebAPI.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = 104857600)]
         public async Task<IActionResult> Upload()
         {
-            await fileService.UploadAsync("resource/product-images", Request.Form.Files);
+            var images = await fileService.UploadAsync("resource/invoice-images", Request.Form.Files);
+
+            await fileWriteRepository.AddRangeAsync(images.Select(i => new Domain.Entities.File
+            {
+                FileName = i.fileName,
+                Path = i.path
+            }).ToList());
+            await fileWriteRepository.SaveAsync();
+
+            //await productImageFileWriteRepository.AddRangeAsync(images.Select(i => new Domain.Entities.ProductImageFile
+            //{
+            //    FileName = i.fileName,
+            //    Path = i.path
+            //}).ToList());
+            //await productImageFileWriteRepository.SaveAsync();
+
+            //await invoiceFileWriteRepository.AddRangeAsync(images.Select(i => new Domain.Entities.InvoiceFile
+            //{
+            //    FileName = i.fileName,
+            //    Path = i.path,
+            //    Price = new Random().Next()
+            //}).ToList());
+            //await invoiceFileWriteRepository.SaveAsync();
             return Ok();
         }
     }
