@@ -1,7 +1,7 @@
 using ETradeAPI.Application;
+using ETradeAPI.Application.Middlewares;
 using ETradeAPI.Infrastructure;
 using ETradeAPI.Infrastructure.Services.Storage.Azure;
-using ETradeAPI.Infrastructure.Services.Storage.Local;
 using ETradeAPI.Persistence;
 using Scalar.AspNetCore;
 
@@ -17,11 +17,11 @@ builder.Services.AddCors(opt =>
 
 builder.WebHost.ConfigureKestrel(opt =>
 {
-    opt.Limits.MaxRequestBodySize = null;  
+    opt.Limits.MaxRequestBodySize = null;
 });
 
 builder.Services.AddStorage<AzureStorage>();
-builder.Services.AddValidationServices();
+//builder.Services.AddValidationServices();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
@@ -40,6 +40,7 @@ app.UseStaticFiles();
 app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthorization();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.MapControllers();
 
 app.Run();

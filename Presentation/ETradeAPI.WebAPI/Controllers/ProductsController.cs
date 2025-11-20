@@ -47,12 +47,6 @@ namespace ETradeAPI.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct(CreateProductCommandRequest request)
         {
-            var validationResult = await createProductValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(validationResult.Errors.GroupBy(x => x.PropertyName)
-                    .ToDictionary(x => x.Key, x => x.Select(x => x.ErrorMessage).ToArray()));
-            }
             var response = await mediator.Send(request);
             return Created("", response);
         }
