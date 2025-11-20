@@ -6,6 +6,7 @@ using ETradeAPI.Application.Features.Queries.Product.GetByIdProduct;
 using ETradeAPI.Application.Features.Queries.Product.GetProducts;
 using ETradeAPI.Application.Repositories.ProductImageFileRepositories;
 using ETradeAPI.Application.Repositories.ProductRepositories;
+using ETradeAPI.Domain.Entities;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -78,9 +79,10 @@ namespace ETradeAPI.WebAPI.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = 104857600)]
         public async Task<IActionResult> Upload()
         {
-            var images = await storageService.UploadAsync("files", Request.Form.Files);
+            List<(string path, string fileName)> images = 
+                await storageService.UploadAsync("product-images", Request.Form.Files);
 
-            await productImageFileWriteRepository.AddRangeAsync(images.Select(i => new Domain.Entities.ProductImageFile
+            await productImageFileWriteRepository.AddRangeAsync(images.Select(i => new ProductImageFile
             {
                 FileName = i.fileName,
                 Path = i.path,

@@ -21,7 +21,6 @@ builder.WebHost.ConfigureKestrel(opt =>
 });
 
 builder.Services.AddStorage<AzureStorage>();
-//builder.Services.AddValidationServices();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
