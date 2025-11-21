@@ -1,13 +1,11 @@
-﻿using ETradeAPI.Application.Abstractions.Storage;
-using ETradeAPI.Application.Features.Commands.Product.CreateProduct;
+﻿using ETradeAPI.Application.Features.Commands.Product.CreateProduct;
 using ETradeAPI.Application.Features.Commands.Product.RemoveProduct;
 using ETradeAPI.Application.Features.Commands.Product.UpdateProduct;
+using ETradeAPI.Application.Features.Commands.ProductImageFile.RemoveProductImage;
+using ETradeAPI.Application.Features.Commands.ProductImageFile.UploadProductImage;
 using ETradeAPI.Application.Features.Queries.Product.GetByIdProduct;
 using ETradeAPI.Application.Features.Queries.Product.GetProducts;
-using ETradeAPI.Application.Repositories.ProductImageFileRepositories;
-using ETradeAPI.Application.Repositories.ProductRepositories;
-using ETradeAPI.Domain.Entities;
-using FluentValidation;
+using ETradeAPI.Application.Features.Queries.ProductImageFile;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,26 +14,15 @@ namespace ETradeAPI.WebAPI.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class ProductsController(
-        IValidator<CreateProductCommandRequest> createProductValidator,
-        IMediator mediator,
-        IProductReadRepository productReadRepository,
-        IValidator<RemoveProductCommandRequest> removeProductValidator,
-        IValidator<UpdateProductCommandRequest> updateProductValidator,
-        IProductImageFileWriteRepository productImageFileWriteRepository,
-        IStorageService storageService
+        IMediator mediator
         ) : ControllerBase
     {
 
         [HttpGet]
         public async Task<IActionResult> GetProducts([FromQuery] GetProductsQueryRequest request)
         {
-            var count = productReadRepository.GetAll(false).Count();
             var values = await mediator.Send(request);
-            return Ok(new
-            {
-                count,
-                Products = values
-            });
+            return Ok(values);
         }
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetProduct([FromRoute] GetByIdProductQueryRequest request)
@@ -46,49 +33,40 @@ namespace ETradeAPI.WebAPI.Controllers
             return Ok(value);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(CreateProductCommandRequest request)
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProductCommandRequest request)
         {
             var response = await mediator.Send(request);
             return Created("", response);
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateProduct(UpdateProductCommandRequest request)
+        public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommandRequest request)
         {
-            var validationResult = await updateProductValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(validationResult.Errors.GroupBy(x => x.PropertyName)
-                    .ToDictionary(x => x.Key, x => x.Select(x => x.ErrorMessage).ToArray()));
-            }
             var response = await mediator.Send(request);
             return Ok(response);
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct([FromRoute] RemoveProductCommandRequest request)
         {
-            var validationResult = await removeProductValidator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(validationResult.Errors.GroupBy(x => x.PropertyName)
-                    .ToDictionary(x => x.Key, x => x.Select(x => x.ErrorMessage).ToArray()));
-            }
             var response = await mediator.Send(request);
             return Ok(response);
         }
         [HttpPost("[action]")]
         [RequestFormLimits(MultipartBodyLengthLimit = 104857600)]
-        public async Task<IActionResult> Upload()
+        public async Task<IActionResult> Upload([FromQuery, FromForm] UploadProductImageCommandRequest request)
         {
-            List<(string path, string fileName)> images = 
-                await storageService.UploadAsync("product-images", Request.Form.Files);
-
-            await productImageFileWriteRepository.AddRangeAsync(images.Select(i => new ProductImageFile
-            {
-                FileName = i.fileName,
-                Path = i.path,
-                Storage = storageService.StorageName
-            }).ToList());
-            await productImageFileWriteRepository.SaveAsync();
+            await mediator.Send(request);
+            return Ok();
+        }
+        [HttpGet("[action]/{Id}")]
+        public async Task<IActionResult> GetProductImages([FromRoute] GetProductImagesQueryRequest request)
+        {
+            IEnumerable<GetProductImagesQueryResponse> images = await mediator.Send(request);
+            return Ok(images);
+        }
+        [HttpDelete("[action]/{Id}")]
+        public async Task<IActionResult> DeleteProductImage([FromRoute] RemoveProductImageCommandRequest request)
+        {
+            await mediator.Send(request);
             return Ok();
         }
     }

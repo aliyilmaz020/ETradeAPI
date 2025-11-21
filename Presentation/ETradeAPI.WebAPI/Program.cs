@@ -20,6 +20,7 @@ builder.WebHost.ConfigureKestrel(opt =>
     opt.Limits.MaxRequestBodySize = null;
 });
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddStorage<AzureStorage>();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices();

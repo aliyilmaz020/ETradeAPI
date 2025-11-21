@@ -1,5 +1,4 @@
-﻿using ETradeAPI.Application.Validators;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
 
 namespace ETradeAPI.Application.Behaviors

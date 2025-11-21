@@ -4,8 +4,8 @@ using ETradeAPI.Persistence.Contexts;
 
 namespace ETradeAPI.Persistence.Repositories.ProductImageFileRepositories
 {
-    public class ProductImageFileReadRepository(ETradeApiContext context) 
-        : ReadRepository<ProductImageFile>(context), 
+    public class ProductImageFileReadRepository(ETradeApiContext context)
+        : ReadRepository<ProductImageFile>(context),
             IProductImageFileReadRepository
     {
     }
